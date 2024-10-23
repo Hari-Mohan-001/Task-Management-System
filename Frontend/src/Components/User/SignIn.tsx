@@ -1,11 +1,15 @@
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SignInUserData} from "../../Interface/IUserData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { userApi } from "../../Api/userApi";
+import { toast } from "react-toastify";
+import { useUser} from "../../Context/userContext"
 
 
 const SignIn = () => {
+const {saveUser,user} = useUser()
+
 
     const [formData, setFormData] = useState<SignInUserData>({
         email: "",
@@ -13,6 +17,13 @@ const SignIn = () => {
       });
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+         if(user){
+          navigate('/dashboard')
+         }
+    },[user])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -20,7 +31,7 @@ const SignIn = () => {
         console.log(formData.email);
       };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
     
         const newErrors: { [key: string]: string } = {};
@@ -37,7 +48,15 @@ const SignIn = () => {
           setErrors(newErrors);
           return;
         }
-        const response = userApi.signInUser(formData)
+        const response =await userApi.signInUser(formData)
+        if(response.success){
+            toast.success("signed in successfully")
+            console.log('sign',response.data);
+            saveUser(response.data)
+            navigate("/dashboard")
+        }else{
+            toast.error(response.message || 'failed to login')
+        }
       };
 
   return (

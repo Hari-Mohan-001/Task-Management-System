@@ -5,18 +5,20 @@ import { useEffect, useState } from "react";
 import { SignUpUserData } from "../../Interface/IUserData";
 import { validateConfirmPasswordAndCompare, ValidateEmail, validateMobile, validateName, validatePassword } from "../../Utils/Validation/signUpValidation";
 import { userApi } from "../../Api/userApi";
+import { toast } from "react-toastify";
+import { useUser} from "../../Context/userContext"
 
 
 
 const SignUpForm = () => {
-
+  const {user} = useUser()
   const navigate = useNavigate();
 
-//   useEffect(() => {
-//     if (user) {
-//       navigate("/home");
-//     }
-//   }, [user, navigate]);
+  useEffect(()=>{
+    if(user){
+     navigate('/dashboard')
+    }
+},[user])
 
   const [formData, setFormData] = useState<SignUpUserData>({
     name: "",
@@ -33,7 +35,7 @@ const SignUpForm = () => {
     setErrors({ ...errors, [e.target.id]: "" });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({ signUpError: "" });
 
@@ -56,7 +58,14 @@ const SignUpForm = () => {
       setErrors(newErrors);
       return;
     }
-    const response = userApi.signUpUser(formData)
+    const response = await userApi.signUpUser(formData)
+
+    if(response.success){
+      toast.success("SignUp successfull")
+      navigate('/login')
+    }else{
+      toast.error(response.message || "Failed to register")
+    }
   
   };
 
