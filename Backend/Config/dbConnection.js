@@ -6,6 +6,7 @@ dotenv.config();
 export const dbConnect = async () => {
   try {
     const connectionString = process.env.MONGOOSE_CONNECTION_STRING;    
+    console.log('the uri',process.env.MONGOOSE_CONNECTION_STRING);
     
     if (!connectionString) {
       throw new Error("Mongoose Connection string not defined");
