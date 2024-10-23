@@ -5,7 +5,7 @@ dotenv.config();
 
 export const dbConnect = async () => {
   try {
-    const connectionString = process.env.MONGOOSE_CONNECTION_STRING;    
+    const connectionString = 'mongodb+srv://hari1111mohan:L1kbPbdteOjoj2Bs@cluster0.qc5zo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';    
     console.log('the uri',process.env.MONGOOSE_CONNECTION_STRING);
     
     if (!connectionString) {
